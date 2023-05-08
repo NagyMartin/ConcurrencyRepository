@@ -1,5 +1,12 @@
 package org.example;
 
+/**
+ * Statistics class used as a thread.
+ * It has a constructor that accesses Festival Gate class in which ticket details are stored in a Queue.
+ * The run method is overridden so that it can get into the Queue to get the information and to
+ * count and print the object types stored in the Queue.
+ */
+
 public class FestivalStatisticThread extends Thread {
 
     protected FestivalGate festivalGate;
@@ -16,34 +23,22 @@ public class FestivalStatisticThread extends Thread {
         }
         try {
             synchronized (festivalGate.gateTickets) {
-                int fullCounter = 0;
-                int fullVipCounter = 0;
-                int freePassCounter = 0;
-                int oneDayCounter = 0;
-                int oneDayVipCounter = 0;
+                Counter counter = new Counter(0, 0, 0, 0, 0);
                 System.out.println(festivalGate.gateTickets.size() + " people entered.");
                 for (Ticket ticket : festivalGate.gateTickets) {
-                    if (ticket.equals(Ticket.FULL)) {
-                        fullCounter++;
-                    }
-                    if (ticket.equals(Ticket.FULL_VIP)) {
-                        fullVipCounter++;
-                    }
-                    if (ticket.equals(Ticket.FREE_PASS)) {
-                        freePassCounter++;
-                    }
-                    if (ticket.equals(Ticket.ONE_DAY)) {
-                        oneDayCounter++;
-                    }
-                    if (ticket.equals(Ticket.ONE_DAY_VIP)) {
-                        oneDayVipCounter++;
+                    switch (ticket) {
+                        case FULL -> counter.setFullCounter(counter.getFullCounter()+1);
+                        case FULL_VIP -> counter.setFullVipCounter(counter.getFullVipCounter()+1);
+                        case ONE_DAY -> counter.setOneDayCounter(counter.getOneDayCounter()+1);
+                        case ONE_DAY_VIP -> counter.setOneDayVipCounter(counter.getOneDayVipCounter()+1);
+                        case FREE_PASS -> counter.setFreePassCounter(counter.getFreePassCounter()+1);
                     }
                 }
-                System.out.println(fullCounter + " people have full tickets.");
-                System.out.println(fullVipCounter + " people have full VIP tickets.");
-                System.out.println(freePassCounter + " people have free passes tickets.");
-                System.out.println(oneDayCounter + " people have one day passes tickets.");
-                System.out.println(oneDayVipCounter + " people have one day VIP passes tickets.");
+                System.out.println(counter.getFullCounter() + " people have full tickets.");
+                System.out.println(counter.getFullVipCounter() + " people have full VIP tickets.");
+                System.out.println(counter.getFreePassCounter() + " people have free passes tickets.");
+                System.out.println(counter.getOneDayCounter() + " people have one day passes tickets.");
+                System.out.println(counter.getOneDayVipCounter() + " people have one day VIP passes tickets.");
             }
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -51,3 +46,4 @@ public class FestivalStatisticThread extends Thread {
         }
     }
 }
+
